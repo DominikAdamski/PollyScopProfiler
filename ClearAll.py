@@ -29,9 +29,10 @@ args = parser.parse_args()
 
 confirmance = input(
     'Do you realy want to remove all including database? (type yes/no) ')
+directory = ''.join(args.directory)
 if confirmance == 'yes':
-    if exists(args.directory[0]) and isdir(args.directory[0]):
-        shutil.rmtree(args.directory[0], ignore_errors=True)
+    if exists(directory) and isdir(directory):
+        shutil.rmtree(directory, ignore_errors=True)
         print('Cleared')
     else:
         print('Given parameter is not valid directory')
