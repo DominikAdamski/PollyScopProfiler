@@ -30,5 +30,7 @@ public:
                                int sumOfCoeff, int sumOfOffsets,
                                uint64_t *upperPartScopID,
                                uint64_t *lowerPartScopID);
+  static int64_t setScopLoopParams(uint64_t upperPartScopID,
+                                   uint64_t lowerPartScopID, int range);
 };
 #endif

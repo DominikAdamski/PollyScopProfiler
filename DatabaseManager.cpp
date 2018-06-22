@@ -116,3 +116,40 @@ int64_t DatabaseManager::setScopParams(int64_t generalInfoID, int maxLoopDepth,
   memcpy(upperPartScopID, &uuid[8], 8);
   return 1;
 }
+
+int64_t DatabaseManager::setScopLoopParams(uint64_t upperPartScopID,
+                                           uint64_t lowerPartScopID,
+                                           int range) {
+  DatabaseHandler Handler(DatabaseFileName);
+
+  unsigned char uuid[16];
+  int rc;
+  stringstream ss;
+  RecordDescription foundRecord;
+  DatabaseMutex dbMutex(Handler.GetDatabasePtr());
+
+  memcpy(&uuid[0], &lowerPartScopID, 8);
+  memcpy(&uuid[8], &upperPartScopID, 8);
+
+  ss << "INSERT INTO loops(scop_id, range) VALUES (? ,'" << range << "');"
+     << endl;
+  string sqlCommand = ss.str();
+
+  sqlite3_stmt *pStmt;
+  rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
+                       0);
+  if (rc) {
+    return -1;
+  }
+  rc = sqlite3_bind_blob(pStmt, 1, uuid, sizeof(char) * 16, SQLITE_STATIC);
+  if (rc) {
+    return -1;
+  }
+  rc = sqlite3_step(pStmt);
+  if (rc && rc != SQLITE_DONE) {
+    return -1;
+  }
+  sqlite3_finalize(pStmt);
+
+  return 1;
+}

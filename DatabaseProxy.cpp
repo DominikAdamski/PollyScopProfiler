@@ -34,3 +34,8 @@ extern "C" int64_t set_scop_params(int64_t generalInfoID, int maxLoopDepth,
       readMemoryAccess, indvarNumber, sumOfCoeff, sumOfOffsets, upperPartScopID,
       lowerPartScopID);
 }
+extern "C" int64_t set_scop_loop_params(uint64_t upperPartScopID,
+                                        uint64_t lowerPartScopID, int range) {
+  return DatabaseManager::setScopLoopParams(upperPartScopID, lowerPartScopID,
+                                            range);
+}

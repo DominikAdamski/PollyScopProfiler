@@ -26,4 +26,6 @@ extern "C" int64_t set_scop_params(int64_t generalInfoID, int maxLoopDepth,
                                    int sumOfCoeff, int sumOfOffsets,
                                    uint64_t *upperPartScopID,
                                    uint64_t *lowerPartScopID);
+extern "C" int64_t set_scop_loop_params(uint64_t upperPartScopID,
+                                        uint64_t lowerPartScopID, int range);
 #endif
