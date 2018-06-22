@@ -20,12 +20,13 @@
 #define DATABASE_PROXY_H
 #include <cstdint>
 extern "C" int64_t register_new_scop(uint64_t hashID, const char *name);
-extern "C" int64_t set_scop_params(int64_t generalInfoID, int maxLoopDepth,
-                                   int instructionNumber, int memoryAccess,
-                                   int readMemoryAccess, int indvarNumber,
-                                   int sumOfCoeff, int sumOfOffsets,
-                                   uint64_t *upperPartScopID,
-                                   uint64_t *lowerPartScopID);
+extern "C" int64_t
+set_scop_params(int64_t generalInfoID, int64_t maxLoopDepth,
+                int64_t instructionNumber, int64_t memoryAccess,
+                int64_t readMemoryAccess, int64_t indvarNumber,
+                int64_t sumOfCoeff, int64_t sumOfOffsets,
+                uint64_t *upperPartScopID, uint64_t *lowerPartScopID);
 extern "C" int64_t set_scop_loop_params(uint64_t upperPartScopID,
-                                        uint64_t lowerPartScopID, int range);
+                                        uint64_t lowerPartScopID,
+                                        int64_t range);
 #endif

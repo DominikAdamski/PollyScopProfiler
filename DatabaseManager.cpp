@@ -71,12 +71,11 @@ int64_t DatabaseManager::registerNewScop(uint64_t hashID, const char *name) {
   return foundRecord.rowID;
 }
 
-int64_t DatabaseManager::setScopParams(int64_t generalInfoID, int maxLoopDepth,
-                                       int instructionNumber, int memoryAccess,
-                                       int readMemoryAccess, int indvarNumber,
-                                       int sumOfCoeff, int sumOfOffsets,
-                                       uint64_t *upperPartScopID,
-                                       uint64_t *lowerPartScopID) {
+int64_t DatabaseManager::setScopParams(
+    int64_t generalInfoID, int64_t maxLoopDepth, int64_t instructionNumber,
+    int64_t memoryAccess, int64_t readMemoryAccess, int64_t indvarNumber,
+    int64_t sumOfCoeff, int64_t sumOfOffsets, uint64_t *upperPartScopID,
+    uint64_t *lowerPartScopID) {
   DatabaseHandler Handler(DatabaseFileName);
   int rc;
   unsigned char uuid[16];
@@ -119,7 +118,7 @@ int64_t DatabaseManager::setScopParams(int64_t generalInfoID, int maxLoopDepth,
 
 int64_t DatabaseManager::setScopLoopParams(uint64_t upperPartScopID,
                                            uint64_t lowerPartScopID,
-                                           int range) {
+                                           int64_t range) {
   DatabaseHandler Handler(DatabaseFileName);
 
   unsigned char uuid[16];
