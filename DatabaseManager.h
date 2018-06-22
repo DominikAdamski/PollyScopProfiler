@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-***********************************************************************/
+ ***********************************************************************/
 
 #ifndef DATABASE_MANAGER_H
 #define DATABASE_MANAGER_H
@@ -25,8 +25,10 @@ class DatabaseManager {
 public:
   static int64_t registerNewScop(uint64_t hashID, const char *name);
   static int64_t setScopParams(int64_t generalInfoID, int maxLoopDepth,
-                               int instructionNumber, int sumOfCoeff,
-                               int sumOfOffsets, uint64_t *upperPartScopID,
+                               int instructionNumber, int memoryAccess,
+                               int readMemoryAccess, int indvarNumber,
+                               int sumOfCoeff, int sumOfOffsets,
+                               uint64_t *upperPartScopID,
                                uint64_t *lowerPartScopID);
 };
 #endif

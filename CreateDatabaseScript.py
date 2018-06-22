@@ -75,6 +75,9 @@ with contextlib.closing(sqlite3.connect(database_path)) as con:
             general_info_id INTEGER,\
             max_loop_depth INTEGER,\
             instruction_number INTEGER,\
+            memory_access INTEGER,\
+            read_memory_access INTEGER,\
+            indvar_number INTEGER,\
             sum_of_array_coeff INTEGER,\
             sum_of_array_offset INTEGER,\
             FOREIGN KEY (general_info_id) REFERENCES general_info (id)\

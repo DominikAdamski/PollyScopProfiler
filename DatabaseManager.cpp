@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-***********************************************************************/
+ ***********************************************************************/
 
 #include "DatabaseManager.h"
 #include "DatabaseMutex.h"
@@ -72,8 +72,9 @@ int64_t DatabaseManager::registerNewScop(uint64_t hashID, const char *name) {
 }
 
 int64_t DatabaseManager::setScopParams(int64_t generalInfoID, int maxLoopDepth,
-                                       int instructionNumber, int sumOfCoeff,
-                                       int sumOfOffsets,
+                                       int instructionNumber, int memoryAccess,
+                                       int readMemoryAccess, int indvarNumber,
+                                       int sumOfCoeff, int sumOfOffsets,
                                        uint64_t *upperPartScopID,
                                        uint64_t *lowerPartScopID) {
   DatabaseHandler Handler(DatabaseFileName);
@@ -89,10 +90,13 @@ int64_t DatabaseManager::setScopParams(int64_t generalInfoID, int maxLoopDepth,
   RecordDescription foundRecord;
   sqlite3_stmt *pStmt;
   ss << "INSERT INTO scop_info(scop_id, general_info_id, max_loop_depth, "
-        "instruction_number, sum_of_array_coeff, sum_of_array_offset) VALUES "
+        "instruction_number, memory_access, read_memory_access, indvar_number, "
+        "sum_of_array_coeff, sum_of_array_offset) VALUES "
         "(? , '"
      << generalInfoID << "','" << maxLoopDepth << "','" << instructionNumber
-     << "','" << sumOfCoeff << "','" << sumOfOffsets << "');" << endl;
+     << "','" << memoryAccess << "','" << readMemoryAccess << "','"
+     << indvarNumber << "','" << sumOfCoeff << "','" << sumOfOffsets << "');"
+     << endl;
   string sqlCommand = ss.str();
   rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
                        0);

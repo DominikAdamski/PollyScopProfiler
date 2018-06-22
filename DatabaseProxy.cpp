@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-***********************************************************************/
+ ***********************************************************************/
 
 #include "DatabaseProxy.h"
 #include "DatabaseManager.h"
@@ -24,10 +24,13 @@ extern "C" int64_t register_new_scop(uint64_t hashID, const char *scopName) {
 }
 
 extern "C" int64_t set_scop_params(int64_t generalInfoID, int maxLoopDepth,
-                                   int instructionNumber, int sumOfCoeff,
-                                   int sumOfOffsets, uint64_t *upperPartScopID,
+                                   int instructionNumber, int memoryAccess,
+                                   int readMemoryAccess, int indvarNumber,
+                                   int sumOfCoeff, int sumOfOffsets,
+                                   uint64_t *upperPartScopID,
                                    uint64_t *lowerPartScopID) {
   return DatabaseManager::setScopParams(
-      generalInfoID, maxLoopDepth, instructionNumber, sumOfCoeff, sumOfOffsets,
-      upperPartScopID, lowerPartScopID);
+      generalInfoID, maxLoopDepth, instructionNumber, memoryAccess,
+      readMemoryAccess, indvarNumber, sumOfCoeff, sumOfOffsets, upperPartScopID,
+      lowerPartScopID);
 }
