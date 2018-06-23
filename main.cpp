@@ -23,7 +23,7 @@
 int main() {
   int64_t res = register_new_scop(0xFF, "test4");
   uint64_t a, b;
-  set_scop_params(res, 1, 2, 3, 4, 5, 6, 7, &a, &b);
+  set_scop_params(res, 1, 2, 3, 4, 5, 8, 6, 7, &a, &b);
   set_scop_loop_params(a, b, 5);
   return 0;
 }

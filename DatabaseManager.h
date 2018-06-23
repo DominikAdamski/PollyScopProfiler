@@ -28,7 +28,7 @@ public:
                                int64_t instructionNumber, int64_t memoryAccess,
                                int64_t readMemoryAccess, int64_t indvarNumber,
                                int64_t sumOfCoeff, int64_t sumOfOffsets,
-                               uint64_t *upperPartScopID,
+                               int64_t scopSize, uint64_t *upperPartScopID,
                                uint64_t *lowerPartScopID);
   static int64_t setScopLoopParams(uint64_t upperPartScopID,
                                    uint64_t lowerPartScopID, int64_t range);

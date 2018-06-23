@@ -74,8 +74,8 @@ int64_t DatabaseManager::registerNewScop(uint64_t hashID, const char *name) {
 int64_t DatabaseManager::setScopParams(
     int64_t generalInfoID, int64_t maxLoopDepth, int64_t instructionNumber,
     int64_t memoryAccess, int64_t readMemoryAccess, int64_t indvarNumber,
-    int64_t sumOfCoeff, int64_t sumOfOffsets, uint64_t *upperPartScopID,
-    uint64_t *lowerPartScopID) {
+    int64_t sumOfCoeff, int64_t scopSize, int64_t sumOfOffsets,
+    uint64_t *upperPartScopID, uint64_t *lowerPartScopID) {
   DatabaseHandler Handler(DatabaseFileName);
   int rc;
   unsigned char uuid[16];
@@ -90,13 +90,15 @@ int64_t DatabaseManager::setScopParams(
   sqlite3_stmt *pStmt;
   ss << "INSERT INTO scop_info(scop_id, general_info_id, max_loop_depth, "
         "instruction_number, memory_access, read_memory_access, indvar_number, "
+        "scop_size, "
         "sum_of_array_coeff, sum_of_array_offset) VALUES "
         "(? , '"
      << generalInfoID << "','" << maxLoopDepth << "','" << instructionNumber
      << "','" << memoryAccess << "','" << readMemoryAccess << "','"
-     << indvarNumber << "','" << sumOfCoeff << "','" << sumOfOffsets << "');"
-     << endl;
+     << indvarNumber << "','" << scopSize << "','" << sumOfCoeff << "','"
+     << sumOfOffsets << "');" << endl;
   string sqlCommand = ss.str();
+  cout << sqlCommand;
   rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
                        0);
   if (rc) {
@@ -133,7 +135,6 @@ int64_t DatabaseManager::setScopLoopParams(uint64_t upperPartScopID,
   ss << "INSERT INTO loops(scop_id, range) VALUES (? ,'" << range << "');"
      << endl;
   string sqlCommand = ss.str();
-
   sqlite3_stmt *pStmt;
   rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
                        0);
