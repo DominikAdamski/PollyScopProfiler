@@ -86,6 +86,8 @@ with contextlib.closing(sqlite3.connect(database_path)) as con:
             cur.execute('CREATE TABLE loops(\
             scop_id BLOB,\
             range INTEGER,\
+            loop_depth INTEGER,\
+            instruction_number INTEGER,\
             loop_id INTEGER PRIMARY KEY,\
             FOREIGN KEY (scop_id) REFERENCES scop_info (scop_id));')
         except sqlite3.Error as e:

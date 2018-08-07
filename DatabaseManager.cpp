@@ -21,6 +21,7 @@
 #include <iostream>
 #include <sqlite3.h>
 #include <sstream>
+#include <stdarg.h>
 #include <string.h>
 #include <string>
 
@@ -118,38 +119,40 @@ int64_t DatabaseManager::setScopParams(
   return 1;
 }
 
-int64_t DatabaseManager::setScopLoopParams(uint64_t upperPartScopID,
-                                           uint64_t lowerPartScopID,
-                                           int64_t range) {
+int64_t DatabaseManager::setScopLoopsParams(
+    uint64_t upperPartScopID, uint64_t lowerPartScopID, int64_t loopsCount,
+    vector<int64_t> &loopsRange, vector<int64_t> &loopsDepth,
+    vector<int64_t> &loopsInstructionNumber) {
   DatabaseHandler Handler(DatabaseFileName);
 
   unsigned char uuid[16];
   int rc;
-  stringstream ss;
   RecordDescription foundRecord;
   DatabaseMutex dbMutex(Handler.GetDatabasePtr());
-
   memcpy(&uuid[0], &lowerPartScopID, 8);
   memcpy(&uuid[8], &upperPartScopID, 8);
-
-  ss << "INSERT INTO loops(scop_id, range) VALUES (? ,'" << range << "');"
-     << endl;
-  string sqlCommand = ss.str();
-  sqlite3_stmt *pStmt;
-  rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
-                       0);
-  if (rc) {
-    return -1;
+  for (int i = 0; i < loopsCount; ++i) {
+    stringstream ss;
+    ss << "INSERT INTO loops(scop_id, range, loop_depth, instruction_number) "
+          "VALUES (? ,'"
+       << loopsRange[i] << "','" << loopsDepth[i] << "','"
+       << loopsInstructionNumber[i] << "');" << endl;
+    string sqlCommand = ss.str();
+    sqlite3_stmt *pStmt;
+    rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1,
+                         &pStmt, 0);
+    if (rc) {
+      return -1;
+    }
+    rc = sqlite3_bind_blob(pStmt, 1, uuid, sizeof(char) * 16, SQLITE_STATIC);
+    if (rc) {
+      return -1;
+    }
+    rc = sqlite3_step(pStmt);
+    if (rc && rc != SQLITE_DONE) {
+      return -1;
+    }
+    sqlite3_finalize(pStmt);
   }
-  rc = sqlite3_bind_blob(pStmt, 1, uuid, sizeof(char) * 16, SQLITE_STATIC);
-  if (rc) {
-    return -1;
-  }
-  rc = sqlite3_step(pStmt);
-  if (rc && rc != SQLITE_DONE) {
-    return -1;
-  }
-  sqlite3_finalize(pStmt);
-
   return 1;
 }

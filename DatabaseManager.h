@@ -19,6 +19,7 @@
 #ifndef DATABASE_MANAGER_H
 #define DATABASE_MANAGER_H
 #include "DatabaseHandler.h"
+#include <vector>
 class DatabaseManager {
   static constexpr const char *DatabaseFileName = "scops.db";
 
@@ -30,7 +31,10 @@ public:
                                int64_t sumOfCoeff, int64_t sumOfOffsets,
                                int64_t scopSize, uint64_t *upperPartScopID,
                                uint64_t *lowerPartScopID);
-  static int64_t setScopLoopParams(uint64_t upperPartScopID,
-                                   uint64_t lowerPartScopID, int64_t range);
+  static int64_t
+  setScopLoopsParams(uint64_t upperPartScopID, uint64_t lowerPartScopID,
+                     int64_t loopsNumber, std::vector<int64_t> &loopsRange,
+                     std::vector<int64_t> &loopsDepth,
+                     std::vector<int64_t> &loopsInstructionNumber);
 };
 #endif

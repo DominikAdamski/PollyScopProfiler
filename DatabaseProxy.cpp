@@ -34,9 +34,24 @@ set_scop_params(int64_t generalInfoID, int64_t maxLoopDepth,
       readMemoryAccess, indvarNumber, scopSize, sumOfCoeff, sumOfOffsets,
       upperPartScopID, lowerPartScopID);
 }
-extern "C" int64_t set_scop_loop_params(uint64_t upperPartScopID,
-                                        uint64_t lowerPartScopID,
-                                        int64_t range) {
-  return DatabaseManager::setScopLoopParams(upperPartScopID, lowerPartScopID,
-                                            range);
+extern "C" int64_t set_scop_loops_params(uint64_t upperPartScopID,
+                                         uint64_t lowerPartScopID,
+                                         int64_t paramsNumber, ...) {
+  const int numberParamsTypes = 3;
+  int64_t loopsNumber = paramsNumber / numberParamsTypes;
+  std::vector<int64_t> loopsRange = std::vector<int64_t>(loopsNumber);
+  std::vector<int64_t> loopsDepth = std::vector<int64_t>(loopsNumber);
+  std::vector<int64_t> loopsInstructionNumber =
+      std::vector<int64_t>(loopsNumber);
+  va_list paramsList;
+  va_start(paramsList, paramsNumber);
+  for (int64_t i = 0; i < loopsNumber; i++) {
+    loopsRange[i] = va_arg(paramsList, int);
+    loopsDepth[i] = va_arg(paramsList, int);
+    loopsInstructionNumber[i] = va_arg(paramsList, int);
+  }
+  va_end(paramsList);
+  return DatabaseManager::setScopLoopsParams(
+      upperPartScopID, lowerPartScopID, loopsNumber, loopsRange, loopsDepth,
+      loopsInstructionNumber);
 }
