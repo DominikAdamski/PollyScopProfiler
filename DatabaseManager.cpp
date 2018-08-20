@@ -119,6 +119,29 @@ int64_t DatabaseManager::setScopParams(
   return 1;
 }
 
+int DatabaseManager::bindSqlStmtWithScopID(const string &sqlCommand,
+                                           DatabaseHandler &handler,
+                                           unsigned char (&uuid)[16]) {
+
+  int rc;
+  sqlite3_stmt *pStmt;
+  rc = sqlite3_prepare(handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
+                       0);
+  if (rc) {
+    return -1;
+  }
+  rc = sqlite3_bind_blob(pStmt, 1, uuid, sizeof(char) * 16, SQLITE_STATIC);
+  if (rc) {
+    return -1;
+  }
+  rc = sqlite3_step(pStmt);
+  if (rc && rc != SQLITE_DONE) {
+    return -1;
+  }
+  sqlite3_finalize(pStmt);
+  return 0;
+}
+
 int64_t DatabaseManager::setScopLoopsParams(
     uint64_t upperPartScopID, uint64_t lowerPartScopID, int64_t loopsCount,
     vector<int64_t> &loopsRange, vector<int64_t> &loopsDepth,
@@ -137,22 +160,9 @@ int64_t DatabaseManager::setScopLoopsParams(
           "VALUES (? ,'"
        << loopsRange[i] << "','" << loopsDepth[i] << "','"
        << loopsInstructionNumber[i] << "');" << endl;
-    string sqlCommand = ss.str();
-    sqlite3_stmt *pStmt;
-    rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1,
-                         &pStmt, 0);
-    if (rc) {
+    if (bindSqlStmtWithScopID(ss.str(), Handler, uuid)) {
       return -1;
     }
-    rc = sqlite3_bind_blob(pStmt, 1, uuid, sizeof(char) * 16, SQLITE_STATIC);
-    if (rc) {
-      return -1;
-    }
-    rc = sqlite3_step(pStmt);
-    if (rc && rc != SQLITE_DONE) {
-      return -1;
-    }
-    sqlite3_finalize(pStmt);
   }
   return 1;
 }

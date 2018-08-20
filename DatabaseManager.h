@@ -19,9 +19,13 @@
 #ifndef DATABASE_MANAGER_H
 #define DATABASE_MANAGER_H
 #include "DatabaseHandler.h"
+#include <string>
 #include <vector>
 class DatabaseManager {
   static constexpr const char *DatabaseFileName = "scops.db";
+  static int bindSqlStmtWithScopID(const std::string &sqlCommand,
+                                   DatabaseHandler &handler,
+                                   unsigned char (&uuid)[16]);
 
 public:
   static int64_t registerNewScop(uint64_t hashID, const char *name);
