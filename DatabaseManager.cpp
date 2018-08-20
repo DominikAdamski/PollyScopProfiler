@@ -19,6 +19,7 @@
 #include "DatabaseManager.h"
 #include "DatabaseMutex.h"
 #include <iostream>
+#include <papi.h>
 #include <sqlite3.h>
 #include <sstream>
 #include <stdarg.h>
@@ -165,4 +166,77 @@ int64_t DatabaseManager::setScopLoopsParams(
     }
   }
   return 1;
+}
+
+int64_t DatabaseManager::startScopProfiling(uint64_t upperPartScopID,
+                                            uint64_t lowerPartScopID) {
+  DatabaseHandler Handler(DatabaseFileName);
+  unsigned char uuid[16];
+  int rc;
+  RecordDescription foundRecord;
+  DatabaseMutex dbMutex(Handler.GetDatabasePtr());
+  dbMutex.Lock();
+  memcpy(&uuid[0], &lowerPartScopID, 8);
+  memcpy(&uuid[8], &upperPartScopID, 8);
+  const PAPI_hw_info_t *hwInfo = PAPI_get_hardware_info();
+  stringstream ss;
+  int memoryLevels = hwInfo->mem_hierarchy.levels;
+  ss << "INSERT INTO hardware_info("
+        "scop_id, ncpu,threads, cores, sockets, "
+        "nnodes,totalcpus,vendor,vendor_string,model,model_string,revision, "
+        "cpuid_family, cpuid_model, cpuid_stepping, cpu_max_mhz, cpu_min_mhz, "
+        "virtualized, virtual_vendor_string, "
+        "virtual_vendor_version,mhz,clock_mhz, memory_levels) "
+        "VALUES (?,'"
+     << hwInfo->ncpu << "','" << hwInfo->threads << "','" << hwInfo->cores
+     << "','" << hwInfo->sockets << "','" << hwInfo->nnodes << "','"
+     << hwInfo->totalcpus << "','" << hwInfo->vendor << "','"
+     << hwInfo->vendor_string << "','" << hwInfo->model << "','"
+     << hwInfo->model_string << "','" << hwInfo->revision << "','"
+     << hwInfo->cpuid_family << "','" << hwInfo->cpuid_model << "','"
+     << hwInfo->cpuid_stepping << "','" << hwInfo->cpu_max_mhz << "','"
+     << hwInfo->cpu_min_mhz << "','" << hwInfo->virtualized << "','"
+     << hwInfo->virtual_vendor_string << "','" << hwInfo->virtual_vendor_version
+     << "','" << hwInfo->mhz << "','" << hwInfo->clock_mhz << "','"
+     << memoryLevels << "');";
+
+  if (bindSqlStmtWithScopID(ss.str(), Handler, uuid)) {
+    return -1;
+  }
+
+  int64_t hwInfoID = sqlite3_last_insert_rowid(Handler.GetDatabasePtr());
+  for (int i = 0; i < memoryLevels; ++i) {
+    for (int j = 0; j < PAPI_MH_MAX_LEVELS; ++j) {
+
+      stringstream ssCache;
+      stringstream ssTlb;
+      PAPI_mh_tlb_info_t tlbInfo = hwInfo->mem_hierarchy.level[i].tlb[j];
+      PAPI_mh_cache_info_t cacheInfo = hwInfo->mem_hierarchy.level[i].cache[j];
+      ssTlb << "INSERT INTO tlb_info (hw_info_id, level, type, num_entries, "
+               "page_size, associativity) VALUES ('"
+            << hwInfoID << "','" << i << "','" << tlbInfo.type << "','"
+            << tlbInfo.num_entries << "','" << tlbInfo.page_size << "','"
+            << tlbInfo.associativity << "');";
+
+      string sqlCommandInsert = ssTlb.str();
+      rc = sqlite3_exec(Handler.GetDatabasePtr(), sqlCommandInsert.c_str(),
+                        nullptr, nullptr, nullptr);
+      if (rc)
+        return -1;
+      ssCache << "INSERT INTO cache_info (hw_info_id, level, type, size, "
+                 "line_size, num_lines, associativity) VALUES ('"
+              << hwInfoID << "','" << i << "','" << cacheInfo.type << "','"
+              << cacheInfo.size << "','" << cacheInfo.line_size << "','"
+              << cacheInfo.num_lines << "','" << cacheInfo.associativity
+              << "');";
+
+      sqlCommandInsert = ssCache.str();
+      rc = sqlite3_exec(Handler.GetDatabasePtr(), sqlCommandInsert.c_str(),
+                        nullptr, nullptr, nullptr);
+      if (rc)
+        return -1;
+    }
+  }
+
+  return 0;
 }

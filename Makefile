@@ -14,7 +14,7 @@ OBJECTS=$(BUILD_DIR)/main.o\
 	$(BUILD_DIR)/opt_runtime.o
 
 $(BUILD_DIR)/test_db: $(OBJECTS)
-	$(COMPILER) $(OBJECTS) -l sqlite3 -o $(BUILD_DIR)/test_db
+	$(COMPILER) $(OBJECTS) -l sqlite3 -l papi -o $(BUILD_DIR)/test_db
 
 $(BUILD_DIR)/opt_runtime.o: $(ARCHIVE_OBJECTS)
 	$(AR) -rv  $@ $^

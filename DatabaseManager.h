@@ -40,5 +40,7 @@ public:
                      int64_t loopsNumber, std::vector<int64_t> &loopsRange,
                      std::vector<int64_t> &loopsDepth,
                      std::vector<int64_t> &loopsInstructionNumber);
+  static int64_t startScopProfiling(uint64_t upperPartScopID,
+                                    uint64_t lowerPartScopID);
 };
 #endif

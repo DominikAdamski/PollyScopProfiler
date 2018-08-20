@@ -29,4 +29,6 @@ set_scop_params(int64_t generalInfoID, int64_t maxLoopDepth,
 extern "C" int64_t set_scop_loops_params(uint64_t upperPartScopID,
                                          uint64_t lowerPartScopID,
                                          int64_t loopsNumber, ...);
+extern "C" int64_t start_scop_profiling(uint64_t upperPartScopID,
+                                        uint64_t lowerPartScopID);
 #endif

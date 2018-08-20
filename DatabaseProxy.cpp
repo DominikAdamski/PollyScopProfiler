@@ -34,6 +34,7 @@ set_scop_params(int64_t generalInfoID, int64_t maxLoopDepth,
       readMemoryAccess, indvarNumber, scopSize, sumOfCoeff, sumOfOffsets,
       upperPartScopID, lowerPartScopID);
 }
+
 extern "C" int64_t set_scop_loops_params(uint64_t upperPartScopID,
                                          uint64_t lowerPartScopID,
                                          int64_t paramsNumber, ...) {
@@ -54,4 +55,9 @@ extern "C" int64_t set_scop_loops_params(uint64_t upperPartScopID,
   return DatabaseManager::setScopLoopsParams(
       upperPartScopID, lowerPartScopID, loopsNumber, loopsRange, loopsDepth,
       loopsInstructionNumber);
+}
+
+extern "C" int64_t start_scop_profiling(uint64_t upperPartScopID,
+                                        uint64_t lowerPartScopID) {
+  return DatabaseManager::startScopProfiling(upperPartScopID, lowerPartScopID);
 }
