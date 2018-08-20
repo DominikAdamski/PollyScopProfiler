@@ -61,6 +61,7 @@ except BaseException:
     exit(1)
 
 if exists(database_path):
+    print('path exists')
     exit(0)
 
 with contextlib.closing(sqlite3.connect(database_path)) as con:
