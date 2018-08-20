@@ -94,79 +94,47 @@ with contextlib.closing(sqlite3.connect(database_path)) as con:
             id INTEGER PRIMARY KEY,\
             scop_id BLOB,\
             ncpu INTEGER,\
+            threads INTEGER,\
+            cores INTEGER,\
+            sockets INTEGER,\
             nnodes INTEGER,\
             totalcpus INTEGER,\
             vendor INTEGER,\
-            vendor_string TEXT\
+            vendor_string TEXT,\
             model INTEGER,\
             model_string TEXT,\
             revision REAL,\
+            cpuid_family INTEGER,\
+            cpuid_model INTEGER,\
+            cpuid_stepping INTEGER,\
+            cpu_max_mhz INTEGER,\
+            cpu_min_mhz INTEGER,\
+            virtualized INTEGER,\
+            virtual_vendor_string TEXT,\
+            virtual_vendor_version TEXT,\
             mhz REAL,\
+            clock_mhz INTEGER,\
             memory_levels INTEGER,\
-            data_1_tlb_type INTEGER,\
-            data_1_tlb_num_entries INTEGER,\
-            data_1_tlb_associativity INTEGER,\
-            instr_1_tlb_type INTEGER,\
-            instr_1_tlb_num_entries INTEGER,\
-            instr_1_tlb_associativity INTEGER,\
-            data_1_cache_type INTEGER,\
-            data_1_cache_size INTEGER,\
-            data_1_cache_line_size INTEGER,\
-            data_1_cache_num_lines INTEGER,\
-            data_1_cache_associativity INTEGER,\
-            instr_1_cache_type INTEGER,\
-            instr_1_cache_size INTEGER,\
-            instr_1_cache_line_size INTEGER,\
-            instr_1_cache_num_lines INTEGER,\
-            instr_1_cache_associativity INTEGER,\
-            data_2_tlb_type INTEGER,\
-            data_2_tlb_num_entries INTEGER,\
-            data_2_tlb_associativity INTEGER,\
-            instr_2_tlb_type INTEGER,\
-            instr_2_tlb_num_entries INTEGER,\
-            instr_2_tlb_associativity INTEGER,\
-            data_2_cache_type INTEGER,\
-            data_2_cache_size INTEGER,\
-            data_2_cache_line_size INTEGER,\
-            data_2_cache_num_lines INTEGER,\
-            data_2_cache_associativity INTEGER,\
-            instr_2_cache_type INTEGER,\
-            instr_2_cache_size INTEGER,\
-            instr_2_cache_line_size INTEGER,\
-            instr_2_cache_num_lines INTEGER,\
-            instr_2_cache_associativity INTEGER,\
-            data_3_tlb_type INTEGER,\
-            data_3_tlb_num_entries INTEGER,\
-            data_3_tlb_associativity INTEGER,\
-            instr_3_tlb_type INTEGER,\
-            instr_3_tlb_num_entries INTEGER,\
-            instr_3_tlb_associativity INTEGER,\
-            data_3_cache_type INTEGER,\
-            data_3_cache_size INTEGER,\
-            data_3_cache_line_size INTEGER,\
-            data_3_cache_num_lines INTEGER,\
-            data_3_cache_associativity INTEGER,\
-            instr_3_cache_type INTEGER,\
-            instr_3_cache_size INTEGER,\
-            instr_3_cache_line_size INTEGER,\
-            instr_3_cache_num_lines INTEGER,\
-            instr_3_cache_associativity INTEGER,\
-            data_4_tlb_type INTEGER,\
-            data_4_tlb_num_entries INTEGER,\
-            data_4_tlb_associativity INTEGER,\
-            instr_4_tlb_type INTEGER,\
-            instr_4_tlb_num_entries INTEGER,\
-            instr_4_tlb_associativity INTEGER,\
-            data_4_cache_type INTEGER,\
-            data_4_cache_size INTEGER,\
-            data_4_cache_line_size INTEGER,\
-            data_4_cache_num_lines INTEGER,\
-            data_4_cache_associativity INTEGER,\
-            instr_4_cache_type INTEGER,\
-            instr_4_cache_size INTEGER,\
-            instr_4_cache_line_size INTEGER,\
-            instr_4_cache_num_lines INTEGER,\
-            instr_4_cache_associativity INTEGER,\
             FOREIGN KEY (scop_id) REFERENCES scop_info (scop_id));')
+            cur.execute('CREATE TABLE tlb_info (\
+            hw_info_id INTEGER,\
+            id INTEGER PRIMARY KEY,\
+            level INTEGER,\
+            type INTEGER,\
+            num_entries INTEGER,\
+            page_size INTEGER,\
+            associativity INTEGER,\
+            FOREIGN KEY (hw_info_id) REFERENCES hw_info  (id));')
+            cur.execute('CREATE TABLE cache_info (\
+            hw_info_id INTEGER,\
+            id INTEGER PRIMARY KEY,\
+            level INTEGER,\
+            type INTEGER,\
+            size INTEGER,\
+            line_size INTEGER,\
+            num_lines INTEGER,\
+            associativity INTEGER,\
+            FOREIGN KEY (hw_info_id) REFERENCES hw_info (id));')
+
         except sqlite3.Error as e:
             print('Cannot set up database ' + str(e))
