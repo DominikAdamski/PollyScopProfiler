@@ -152,6 +152,7 @@ int64_t DatabaseManager::setScopLoopsParams(
   int rc;
   RecordDescription foundRecord;
   DatabaseMutex dbMutex(Handler.GetDatabasePtr());
+  dbMutex.Lock();
   memcpy(&uuid[0], &lowerPartScopID, 8);
   memcpy(&uuid[8], &upperPartScopID, 8);
   for (int i = 0; i < loopsCount; ++i) {
