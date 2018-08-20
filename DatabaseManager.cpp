@@ -100,7 +100,6 @@ int64_t DatabaseManager::setScopParams(
      << indvarNumber << "','" << scopSize << "','" << sumOfCoeff << "','"
      << sumOfOffsets << "');" << endl;
   string sqlCommand = ss.str();
-  cout << sqlCommand;
   rc = sqlite3_prepare(Handler.GetDatabasePtr(), sqlCommand.c_str(), -1, &pStmt,
                        0);
   if (rc) {
